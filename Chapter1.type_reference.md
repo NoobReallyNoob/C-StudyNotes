@@ -1,13 +1,17 @@
 第1章 类型推导
+
+条款1:
 拷贝：忽视引用和const
 引用/指针：携带引用和const
 万能引用：能区分左值引用和右值引用
 
 数组：会被推导成指针
 
+条款2:
 auto:和template的区别在于列表初始化，auto会将{a, b, c}推导为{initializer_list}，template不能
 C++典型的错误设计，但是用auto作为返回值或lamba形参中使用时，实际上是template型推导，不会产生这样的问题
 
+条款3:
 decltype:
 返回值型别尾序语法，使用尾序返回值->decltype()
 
@@ -38,5 +42,7 @@ auto& Foo(T& container, Index i)
 
 这东西有什么卵用？？？
 
+条款4:
 typeid typeinfo
 并不完全准确 无法正确反应引用和const的推导
+(渣渣，我还是手动关了frtti吧)
