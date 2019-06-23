@@ -167,6 +167,56 @@ TEST(ConstructTest, Test1) {
 
 以上。
 
+条款13:使用const_iterator代替iterator
+
+本人已有此习惯
+
+条款14:noexpect
+目前遵循编程规则：不使用C++异常机制
+（除了某些时候stl抛异常不希望程序崩溃不得不捕捉）
+
+条款15:尽量使用constexpr
+
+本人已有此习惯
+
+1.constexpr函数，可以作两用，编译期生成constexpr字面值，
+运行期得到普通字面值
+
+2.constexpr对象
+随手写的，能用字面值表示的对象似乎都可以成为constexpr对象
+容器中array可以作为constexpr对象的成员变量，别的都不行
+
+class Point {
+public:
+    constexpr Point(double x , double y ) : x(x), y(y) {
+    }
+    constexpr void SetX(double x) 
+    {
+        this->x = x;
+    }
+    constexpr void SetY(double y)
+    {
+        this->y = y;
+    }
+private:
+    double x, y;
+    std::array<int32_t, 10> test_;
+    //std::map<int32_t, int32_t> testMap_;
+};
+
+constexpr Point p1(6.6, 6.6);
+
+条款16:确保const成员函数的线程安全性
+我很无语。。。你的成员变量是mutable的，然后你这const还叫const吗。。
+而且光你const有毛用。。有增删，你还不是要加锁。。
+这一节基本废话
+
+嗯，单个变量或内存区域用原子类型 我还是知道的
+
+条款17:特种成员函数的生成
+1.如果显示定义了移动构造/赋值，拷贝构造/赋值将无法自动被编译器生成。
+2.移动构造的时候，能移动的移动，不能移动的拷贝。
+剩下的说实话。。调的时候也能生成，完全不需要了解默认生成。。
 
 
 
