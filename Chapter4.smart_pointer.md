@@ -5,7 +5,13 @@
 (这一节居然讲这个。。)
 2.实际上析构器是unique_ptr型别的一部分
 3.可以方便地转为shared_ptr
-4.默认情况下自身的析构器不占内存，实际上可以认为和裸指针开销一致
+4.unique_ptr实际上有两个版本,单对象unique_ptr<T>,数组unique_ptr<T[]>两个版本
+数组版本重载了下标
+如:
+std::unique_ptr<int32_t[]> m(new int32_t[10]);
+m[6] = 6;
+注意:数组版本无法通过make_unique创建
+5.默认情况下自身的析构器不占内存，实际上可以认为和裸指针开销一致
 
 条款19:shared_ptr
 1.自身内存开销是裸指针两倍，还需要一个裸指针维护一个控制块
@@ -55,7 +61,6 @@ enable_shared_from_this有一个成员函数shared_from_this，
 所以enable_shared_from_this也导致此对象必须用shared_ptr维护
 
 7.shared_ptr没有原始数组版本，只有单对象版本，即没有shared_ptr<T[]>
-而unique_ptr兼有,即有unique_ptr<T[]>这样的特殊版本，并重载了下标
 
 8.shared_ptr的额外开销
 1.如果用默认析构器+分配器，控制块额外会消耗三个字节，主要的开销是分配控制块内存
