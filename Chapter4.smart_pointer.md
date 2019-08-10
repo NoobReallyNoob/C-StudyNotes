@@ -1,6 +1,6 @@
 第3章 smart pointer
 
-条款18: unique_ptr
+条款18:unique_ptr
 1.没有捕获的情况下lamba表达式没有任何额外的存储字节，开销比函数指针还小
 (这一节居然讲这个。。)
 2.实际上析构器是unique_ptr型别的一部分
@@ -69,6 +69,54 @@ enable_shared_from_this有一个成员函数shared_from_this，
 2.引用计数的加减，需要原子化操作，但实际上会映射到单机器指令，单指令操作成本较低。
 3.控制块的虚函数开销，仅析构时。
 
+条款20:weak_ptr
+weak_ptr的expired不是原子的。
+用weak_ptr构造shared_ptr或者.lock()是原子的，前者会抛异常，
+最好用.lock()。
+
+使用场合:
+1.持有生命周期不属于自己控制的对象(缓存，observer模式)
+2.防止循环引用(父子节点如果明确，可以父节点持有unique_ptr，子节点持有裸指针)
+
+条款21:使用std::make_unique和std::make_shared
+好处:
+1.简洁
+2.异常安全
+e.g.
+void processWidget(std::shared_ptr<Widget>(new Widget), computePriority());
+编译器可能顺序:
+1).new widget
+2).computePriority()
+3).std::shared_ptr构造
+如果2中抛异常，则widget内存泄露，使用make_shared则可以避免。
+
+不能使用make_unique和make_shared的场合，必须单独用一个表达式构造好智能指针，不可以
+直接在参数中构造。
+建议写法:
+std::shared_ptr<Widget> spw(new Widget, cusDel)
+void processWidget(std::move(spw), computePriority());
+使用move避免引用计数加减。
+
+3.shared_ptr有控制块，make_shared可以避免分配两次内存，有更好的性能
+
+缺陷:
+某些场合无法使用:
+1.不支持列表初始化
+2.自定义析构器
+3.weak_ptr场合,在weak_ptr析构前，控制块都会存在，通过make_shared创建的情况下，
+对象本身的内存和控制块生命周期一致，只要有weak_ptr存在，对象本身的内存无法单独释放，
+而构造函数创建的则可以使对象先单独释放。
+
+条款22:pimpl
+好处:
+1.编译速度
+2.屏蔽接口细节
+3.移动语义友好
+
+缺陷:
+1.需要使用std::experimental::propagate_const保证const传递给指针(需要编译器/编译选项支持)
+
+由于unique_ptr要求完整型别(shared_ptr不要求)，析构函数必须显示定义，且在源文件中声明。
 
 
 
